@@ -1,0 +1,116 @@
+{
+  "schema_version": "1.0",
+  "last_updated": "2025-12-03T16:00:32.837140",
+  "basic_info": {
+    "title": "Fearie Tales",
+    "subtitle": "Stories of the Grimm & Gruesome",
+    "author": null,
+    "editor": "Stephen Jones",
+    "illustrator": "Alan Lee",
+    "contributors": []
+  },
+  "publication_details": {
+    "isbn_10": null,
+    "isbn_13": null,
+    "publisher": null,
+    "publication_year": null,
+    "original_publication_year": null,
+    "language": "en",
+    "page_count": null,
+    "genre": null
+  },
+  "edition_details": {
+    "edition_description": "Special signed edition",
+    "is_limited_edition": false,
+    "edition_size": null,
+    "copy_identifier": null,
+    "is_signed": true,
+    "signed_by": null,
+    "signature_notes": "Multiple contributors"
+  },
+  "physical_details": {
+    "format": "Hardcover",
+    "binding_type": null,
+    "binding_color": null,
+    "gilt_details": null,
+    "has_dust_jacket": false,
+    "dust_jacket_condition": null,
+    "has_slipcase": true,
+    "slipcase_condition": null,
+    "dimensions": {
+      "height_cm": null,
+      "width_cm": null,
+      "depth_cm": null,
+      "weight_g": null
+    }
+  },
+  "condition": {
+    "overall_grade": null,
+    "book_condition": null,
+    "defects": [],
+    "special_features": [],
+    "condition_notes": null
+  },
+  "images": {
+    "files": [
+      "IMG_5525.jpg",
+      "IMG_5526.jpg",
+      "IMG_5527.jpg",
+      "IMG_5528.jpg",
+      "IMG_5530.jpg"
+    ],
+    "primary_image": "IMG_5525.jpg",
+    "image_notes": {}
+  },
+  "pricing": {
+    "estimated_value_min": null,
+    "estimated_value_max": null,
+    "comparable_sales": [],
+    "pricing_notes": null
+  },
+  "ebay_listing_data": {
+    "category_id": null,
+    "category_path": null,
+    "listing_title": null,
+    "listing_description": null,
+    "product_identifiers": {
+      "epid": null,
+      "upc": null,
+      "ean": null
+    },
+    "item_specifics": {
+      "Format": null,
+      "Language": null,
+      "Author": null,
+      "Publisher": null,
+      "Publication Year": null,
+      "Special Attributes": []
+    },
+    "policies": {
+      "payment_policy_id": null,
+      "return_policy_id": null,
+      "fulfillment_policy_id": null
+    }
+  },
+  "data_sources": {
+    "manual_entry": [
+      "title",
+      "editor",
+      "illustrator",
+      "subtitle",
+      "format",
+      "signed",
+      "edition",
+      "notes",
+      "images"
+    ],
+    "vision_extracted": [],
+    "api_enriched": {
+      "source": null,
+      "fields": [],
+      "retrieved_at": null
+    }
+  },
+  "notes": "Multiple signature pages with gothic/fantasy artwork, includes dramatic cat-like creature illustration",
+  "internal_notes": null
+}

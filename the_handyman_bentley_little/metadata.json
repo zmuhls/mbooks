@@ -1,0 +1,116 @@
+{
+  "schema_version": "1.0",
+  "last_updated": "2025-12-03T16:00:32.836748",
+  "basic_info": {
+    "title": "The Handyman",
+    "subtitle": null,
+    "author": "Bentley Little",
+    "editor": null,
+    "illustrator": null,
+    "contributors": []
+  },
+  "publication_details": {
+    "isbn_10": null,
+    "isbn_13": null,
+    "publisher": "Graveyard Editions",
+    "publication_year": null,
+    "original_publication_year": null,
+    "language": "en",
+    "page_count": null,
+    "genre": null
+  },
+  "edition_details": {
+    "edition_description": "Special Signed Edition - Limited to 500 numbered copies",
+    "is_limited_edition": true,
+    "edition_size": 500,
+    "copy_identifier": {
+      "type": "numbered",
+      "value": "402"
+    },
+    "is_signed": true,
+    "signed_by": "Bentley Little",
+    "signature_notes": null
+  },
+  "physical_details": {
+    "format": "Hardcover",
+    "binding_type": "Leather",
+    "binding_color": "Red",
+    "gilt_details": "Gold gilt title",
+    "has_dust_jacket": false,
+    "dust_jacket_condition": null,
+    "has_slipcase": false,
+    "slipcase_condition": null,
+    "dimensions": {
+      "height_cm": null,
+      "width_cm": null,
+      "depth_cm": null,
+      "weight_g": null
+    }
+  },
+  "condition": {
+    "overall_grade": null,
+    "book_condition": null,
+    "defects": [],
+    "special_features": [],
+    "condition_notes": null
+  },
+  "images": {
+    "files": [
+      "IMG_5513.jpg",
+      "IMG_5516.jpg"
+    ],
+    "primary_image": "IMG_5513.jpg",
+    "image_notes": {}
+  },
+  "pricing": {
+    "estimated_value_min": null,
+    "estimated_value_max": null,
+    "comparable_sales": [],
+    "pricing_notes": null
+  },
+  "ebay_listing_data": {
+    "category_id": null,
+    "category_path": null,
+    "listing_title": null,
+    "listing_description": null,
+    "product_identifiers": {
+      "epid": null,
+      "upc": null,
+      "ean": null
+    },
+    "item_specifics": {
+      "Format": null,
+      "Language": null,
+      "Author": null,
+      "Publisher": null,
+      "Publication Year": null,
+      "Special Attributes": []
+    },
+    "policies": {
+      "payment_policy_id": null,
+      "return_policy_id": null,
+      "fulfillment_policy_id": null
+    }
+  },
+  "data_sources": {
+    "manual_entry": [
+      "title",
+      "author",
+      "publisher",
+      "edition",
+      "copy_number",
+      "signed_by",
+      "format",
+      "notes",
+      "images"
+    ],
+    "vision_extracted": [],
+    "api_enriched": {
+      "source": null,
+      "fields": [],
+      "retrieved_at": null
+    }
+  },
+  "notes": "Red leather binding with gold gilt title",
+  "internal_notes": null
+}

@@ -1,0 +1,421 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "eBay Book Listing Metadata Schema",
+  "description": "Comprehensive metadata schema for collectible book listings, designed to map cleanly to eBay Inventory API",
+  "type": "object",
+  "required": ["schema_version", "basic_info", "images"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "description": "Schema version for migration tracking",
+      "const": "1.0"
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp of last metadata update"
+    },
+    "basic_info": {
+      "type": "object",
+      "description": "Core identifying information about the book",
+      "required": ["title"],
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "description": "Full book title"
+        },
+        "subtitle": {
+          "type": ["string", "null"],
+          "description": "Book subtitle if applicable"
+        },
+        "author": {
+          "oneOf": [
+            {"type": "string"},
+            {"type": "array", "items": {"type": "string"}}
+          ],
+          "description": "Author name(s)"
+        },
+        "editor": {
+          "oneOf": [
+            {"type": "string"},
+            {"type": "array", "items": {"type": "string"}},
+            {"type": "null"}
+          ],
+          "description": "Editor name(s) for anthologies"
+        },
+        "illustrator": {
+          "type": ["string", "null"],
+          "description": "Illustrator name if applicable"
+        },
+        "contributors": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Other contributors (foreword, afterword, etc.)"
+        }
+      }
+    },
+    "publication_details": {
+      "type": "object",
+      "description": "Publication-specific information",
+      "properties": {
+        "isbn_10": {
+          "type": ["string", "null"],
+          "pattern": "^[0-9]{9}[0-9X]$",
+          "description": "10-digit ISBN"
+        },
+        "isbn_13": {
+          "type": ["string", "null"],
+          "pattern": "^97[89][0-9]{10}$",
+          "description": "13-digit ISBN"
+        },
+        "publisher": {
+          "type": ["string", "null"],
+          "description": "Publisher name"
+        },
+        "publication_year": {
+          "type": ["integer", "null"],
+          "minimum": 1000,
+          "maximum": 2100,
+          "description": "Year published"
+        },
+        "original_publication_year": {
+          "type": ["integer", "null"],
+          "minimum": 1000,
+          "maximum": 2100,
+          "description": "Original publication year if reprint"
+        },
+        "language": {
+          "type": "string",
+          "default": "en",
+          "description": "ISO 639-1 language code"
+        },
+        "page_count": {
+          "type": ["integer", "null"],
+          "minimum": 1,
+          "description": "Number of pages"
+        },
+        "genre": {
+          "oneOf": [
+            {"type": "string"},
+            {"type": "array", "items": {"type": "string"}},
+            {"type": "null"}
+          ],
+          "description": "Book genre(s) or category"
+        }
+      }
+    },
+    "edition_details": {
+      "type": "object",
+      "description": "Edition-specific information for collectibles",
+      "properties": {
+        "edition_description": {
+          "type": ["string", "null"],
+          "description": "Full edition statement (e.g., 'First Edition', 'Special Signed Edition')"
+        },
+        "is_limited_edition": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether this is a limited edition"
+        },
+        "edition_size": {
+          "type": ["integer", "null"],
+          "minimum": 1,
+          "description": "Total number of copies in this edition"
+        },
+        "copy_identifier": {
+          "type": ["object", "null"],
+          "description": "Unique identifier for this specific copy",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["numbered", "lettered", "none"],
+              "description": "Type of copy identification"
+            },
+            "value": {
+              "type": "string",
+              "description": "The actual identifier (e.g., '402', 'PP', 'HC')"
+            }
+          },
+          "required": ["type", "value"]
+        },
+        "is_signed": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether this copy is signed"
+        },
+        "signed_by": {
+          "oneOf": [
+            {"type": "string"},
+            {"type": "array", "items": {"type": "string"}},
+            {"type": "null"}
+          ],
+          "description": "Name(s) of signatories"
+        },
+        "signature_notes": {
+          "type": ["string", "null"],
+          "description": "Additional signature information (e.g., 'Multiple signature pages', 'Signed to previous owner')"
+        }
+      }
+    },
+    "physical_details": {
+      "type": "object",
+      "description": "Physical characteristics of the book",
+      "properties": {
+        "format": {
+          "type": ["string", "null"],
+          "enum": ["Hardcover", "Paperback", "Trade Paperback", "Mass Market Paperback", "Leather Bound", null],
+          "description": "Book format"
+        },
+        "binding_type": {
+          "type": ["string", "null"],
+          "enum": ["Cloth", "Leather", "Half-Leather", "Full Leather", "Paper", "Board", "Unknown", null],
+          "description": "Type of binding"
+        },
+        "binding_color": {
+          "type": ["string", "null"],
+          "description": "Color of binding"
+        },
+        "gilt_details": {
+          "type": ["string", "null"],
+          "description": "Gilt work description (e.g., 'Gold gilt spine', 'Top edge gilt')"
+        },
+        "has_dust_jacket": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether dust jacket is present"
+        },
+        "dust_jacket_condition": {
+          "type": ["string", "null"],
+          "description": "Condition of dust jacket if present"
+        },
+        "has_slipcase": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether slipcase is present"
+        },
+        "slipcase_condition": {
+          "type": ["string", "null"],
+          "description": "Condition of slipcase if present"
+        },
+        "dimensions": {
+          "type": "object",
+          "description": "Physical dimensions",
+          "properties": {
+            "height_cm": {
+              "type": ["number", "null"],
+              "minimum": 0
+            },
+            "width_cm": {
+              "type": ["number", "null"],
+              "minimum": 0
+            },
+            "depth_cm": {
+              "type": ["number", "null"],
+              "minimum": 0
+            },
+            "weight_g": {
+              "type": ["number", "null"],
+              "minimum": 0
+            }
+          }
+        }
+      }
+    },
+    "condition": {
+      "type": "object",
+      "description": "Condition assessment",
+      "properties": {
+        "overall_grade": {
+          "type": ["string", "null"],
+          "enum": ["NEW", "LIKE_NEW", "VERY_GOOD", "GOOD", "ACCEPTABLE", "FOR_PARTS_OR_NOT_WORKING", null],
+          "description": "Standardized eBay condition code"
+        },
+        "book_condition": {
+          "type": ["string", "null"],
+          "description": "Detailed book condition description"
+        },
+        "defects": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "List of specific defects or issues"
+        },
+        "special_features": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "List of positive condition attributes"
+        },
+        "condition_notes": {
+          "type": ["string", "null"],
+          "maxLength": 1000,
+          "description": "Human-readable condition summary for listing"
+        }
+      }
+    },
+    "images": {
+      "type": "object",
+      "description": "Image assets for listing",
+      "required": ["files"],
+      "properties": {
+        "files": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Array of image filenames in display order"
+        },
+        "primary_image": {
+          "type": ["string", "null"],
+          "description": "Filename of primary listing image"
+        },
+        "image_notes": {
+          "type": "object",
+          "description": "Map of filename to description of what each image shows",
+          "additionalProperties": {"type": "string"}
+        }
+      }
+    },
+    "pricing": {
+      "type": "object",
+      "description": "Pricing information",
+      "properties": {
+        "estimated_value_min": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "description": "Estimated minimum value"
+        },
+        "estimated_value_max": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "description": "Estimated maximum value"
+        },
+        "comparable_sales": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "date": {"type": "string", "format": "date"},
+              "price": {"type": "number", "minimum": 0},
+              "source": {"type": "string"},
+              "notes": {"type": "string"}
+            }
+          },
+          "description": "Historical comparable sales data"
+        },
+        "pricing_notes": {
+          "type": ["string", "null"],
+          "description": "Notes on pricing strategy or considerations"
+        }
+      }
+    },
+    "ebay_listing_data": {
+      "type": "object",
+      "description": "eBay-specific listing preparation",
+      "properties": {
+        "category_id": {
+          "type": ["string", "null"],
+          "description": "eBay category ID (e.g., '377' for Antiquarian & Collectible)"
+        },
+        "category_path": {
+          "type": ["string", "null"],
+          "description": "Human-readable category path"
+        },
+        "listing_title": {
+          "type": ["string", "null"],
+          "maxLength": 80,
+          "description": "Optimized 80-character eBay listing title"
+        },
+        "listing_description": {
+          "type": ["string", "null"],
+          "maxLength": 4000,
+          "description": "HTML listing description for eBay"
+        },
+        "product_identifiers": {
+          "type": "object",
+          "properties": {
+            "epid": {
+              "type": ["string", "null"],
+              "description": "eBay product ID"
+            },
+            "upc": {
+              "type": ["string", "null"],
+              "description": "Universal Product Code"
+            },
+            "ean": {
+              "type": ["string", "null"],
+              "description": "European Article Number"
+            }
+          }
+        },
+        "item_specifics": {
+          "type": "object",
+          "description": "eBay item specifics (aspects)",
+          "properties": {
+            "Format": {"type": ["string", "null"]},
+            "Language": {"type": ["string", "null"]},
+            "Author": {"type": ["string", "null"]},
+            "Publisher": {"type": ["string", "null"]},
+            "Publication Year": {"type": ["string", "null"]},
+            "Special Attributes": {
+              "type": "array",
+              "items": {"type": "string"}
+            }
+          }
+        },
+        "policies": {
+          "type": "object",
+          "description": "eBay business policy IDs (set during OAuth setup)",
+          "properties": {
+            "payment_policy_id": {"type": ["string", "null"]},
+            "return_policy_id": {"type": ["string", "null"]},
+            "fulfillment_policy_id": {"type": ["string", "null"]}
+          }
+        }
+      }
+    },
+    "data_sources": {
+      "type": "object",
+      "description": "Provenance tracking for data fields",
+      "properties": {
+        "manual_entry": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Fields entered manually by user"
+        },
+        "vision_extracted": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Fields extracted via AI vision analysis"
+        },
+        "api_enriched": {
+          "type": "object",
+          "description": "Fields enriched from external APIs",
+          "properties": {
+            "source": {
+              "type": "string",
+              "enum": ["google_books", "open_library", "isbndb", "other"],
+              "description": "API source used"
+            },
+            "fields": {
+              "type": "array",
+              "items": {"type": "string"},
+              "description": "Fields populated from this API"
+            },
+            "retrieved_at": {
+              "type": "string",
+              "format": "date-time",
+              "description": "When API data was retrieved"
+            }
+          }
+        }
+      }
+    },
+    "notes": {
+      "type": ["string", "null"],
+      "description": "General notes about the book (migrated from old format)"
+    },
+    "internal_notes": {
+      "type": ["string", "null"],
+      "description": "Private notes not for public listing"
+    }
+  }
+}
