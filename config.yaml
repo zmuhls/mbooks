@@ -1,0 +1,138 @@
+# Muhlbauer Books LLC - Collectible Books Management System
+# Configuration file for LLM extraction, eBay integration, and website deployment
+
+app:
+  name: "Muhlbauer Books LLC"
+  version: "1.0.0"
+  environment: "development"  # development, staging, production
+
+# Directory structure
+paths:
+  listings_dir: "./listings"
+  archive_dir: "./archive"
+  exports_dir: "./exports"
+  images_dir: "./images"
+  website_dir: "./site"
+
+# LLM Vision Extraction Settings
+vision:
+  provider: "anthropic"  # anthropic, openai, local
+  model: "claude-sonnet-4-5-20250929"
+  max_images_per_request: 5
+  extraction_prompts:
+    book_metadata: |
+      Analyze this book image and extract all visible metadata.
+      Return a JSON object with these fields:
+      - title, subtitle, author, editor, illustrator
+      - publisher, publication_year, isbn
+      - edition_info, copy_number, limitation_statement
+      - binding_type, binding_color, format
+      - signatures_visible, signature_details
+      - condition_observations, special_features
+      - any visible text on spine, cover, or pages
+
+    condition_assessment: |
+      Assess the condition of this book from the image.
+      Note any visible wear, damage, or special features.
+      Rate overall condition: NEW, LIKE_NEW, VERY_GOOD, GOOD, ACCEPTABLE
+      List specific observations about covers, spine, pages, dust jacket.
+
+# eBay Integration
+ebay:
+  environment: "sandbox"  # sandbox, production
+  api_version: "v1"
+
+  # OAuth credentials (set via environment variables)
+  credentials:
+    client_id_env: "EBAY_CLIENT_ID"
+    client_secret_env: "EBAY_CLIENT_SECRET"
+    refresh_token_env: "EBAY_REFRESH_TOKEN"
+
+  # API endpoints
+  endpoints:
+    sandbox:
+      auth: "https://api.sandbox.ebay.com/identity/v1/oauth2/token"
+      inventory: "https://api.sandbox.ebay.com/sell/inventory/v1"
+      fulfillment: "https://api.sandbox.ebay.com/sell/fulfillment/v1"
+    production:
+      auth: "https://api.ebay.com/identity/v1/oauth2/token"
+      inventory: "https://api.ebay.com/sell/inventory/v1"
+      fulfillment: "https://api.ebay.com/sell/fulfillment/v1"
+
+  # Default listing settings
+  defaults:
+    category_id: "377"  # Antiquarian & Collectible Books
+    category_path: "Books & Magazines > Antiquarian & Collectible"
+    listing_duration: "GTC"  # Good Til Cancelled
+    listing_format: "FixedPrice"
+    currency: "USD"
+    country: "US"
+    location: "United States"
+    dispatch_time_max: 3
+
+  # Business policies (set after OAuth setup)
+  policies:
+    payment_policy_id: null
+    return_policy_id: null
+    fulfillment_policy_id: null
+
+  # CSV bulk upload settings
+  csv:
+    delimiter: ","
+    encoding: "utf-8"
+    max_title_length: 80
+    max_description_length: 4000
+
+# Website settings
+website:
+  title: "Muhlbauer Books LLC"
+  tagline: "Rare & Collectible Books"
+  theme: "retro-futurist"
+
+  # Color palette (retro-futurist book aesthetic)
+  colors:
+    primary: "#1a1a2e"      # Deep space navy
+    secondary: "#16213e"    # Midnight blue
+    accent: "#e94560"       # Neon coral
+    highlight: "#0f3460"    # Dark teal
+    gold: "#d4af37"         # Antiquarian gold
+    cream: "#f5f0e1"        # Aged paper
+    text_light: "#eaeaea"
+    text_dark: "#1a1a2e"
+
+  # Typography
+  fonts:
+    heading: "'Playfair Display', Georgia, serif"
+    body: "'Source Sans Pro', 'Segoe UI', sans-serif"
+    mono: "'IBM Plex Mono', 'Courier New', monospace"
+
+  features:
+    show_pricing: false
+    show_ebay_links: true
+    enable_search: true
+    enable_filters: true
+    image_lightbox: true
+    lazy_loading: true
+
+# Data validation rules
+validation:
+  required_fields:
+    - "basic_info.title"
+    - "images.files"
+
+  isbn_patterns:
+    isbn_10: "^[0-9]{9}[0-9X]$"
+    isbn_13: "^97[89][0-9]{10}$"
+
+  condition_grades:
+    - "NEW"
+    - "LIKE_NEW"
+    - "VERY_GOOD"
+    - "GOOD"
+    - "ACCEPTABLE"
+
+# Logging
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "./logs/app.log"

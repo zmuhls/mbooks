@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muhlbauer Books LLC | Rare & Collectible Books</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+Pro:wght@300;400;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Scanline overlay for retro effect -->
+    <div class="scanlines"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-glow"></div>
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="8" y="5" width="35" height="50" rx="2" stroke="currentColor" stroke-width="2"/>
+                        <rect x="17" y="5" width="35" height="50" rx="2" stroke="currentColor" stroke-width="2"/>
+                        <line x1="22" y1="15" x2="47" y2="15" stroke="currentColor" stroke-width="2"/>
+                        <line x1="22" y1="22" x2="47" y2="22" stroke="currentColor" stroke-width="1.5"/>
+                        <line x1="22" y1="28" x2="40" y2="28" stroke="currentColor" stroke-width="1.5"/>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <h1>Muhlbauer Books</h1>
+                    <span class="tagline">Rare & Collectible Editions</span>
+                </div>
+            </div>
+            <nav class="header-nav">
+                <a href="#catalog" class="nav-link">Catalog</a>
+                <a href="#about" class="nav-link">About</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h2 class="hero-title">Muhlbauer Books and Miscellany Collections</h2>
+            <p class="hero-subtitle">Check out our recent Bonham's sale<br><a href="https://www.bonhams.com/auction/31643/highlights-from-the-medical-library-of-j-muhlbauer/" target="_blank" rel="noopener" class="bonhams-link">Highlights from the Medical Library of J Muhlbauer</a></p>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-value" id="totalBooks">--</span>
+                    <span class="stat-label">Books</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value" id="signedBooks">--</span>
+                    <span class="stat-label">Signed</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value" id="limitedBooks">--</span>
+                    <span class="stat-label">Limited</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Controls Section -->
+    <section class="controls" id="catalog">
+        <div class="controls-content">
+            <div class="search-container">
+                <div class="search-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                </div>
+                <input type="text" id="searchInput" placeholder="Search titles, authors, editions..." class="search-input">
+                <div class="search-glow"></div>
+            </div>
+            <div class="filter-group">
+                <button class="filter-btn active" data-filter="all">
+                    <span class="filter-indicator"></span>
+                    All Books
+                </button>
+                <button class="filter-btn" data-filter="signed">
+                    <span class="filter-indicator"></span>
+                    Signed
+                </button>
+                <button class="filter-btn" data-filter="limited">
+                    <span class="filter-indicator"></span>
+                    Limited Edition
+                </button>
+                <button class="filter-btn" data-filter="slipcase">
+                    <span class="filter-indicator"></span>
+                    With Slipcase
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Catalog Grid -->
+    <main class="catalog">
+        <div id="bookGrid" class="book-grid">
+            <!-- Books loaded dynamically -->
+        </div>
+        <div id="emptyState" class="empty-state" style="display: none;">
+            <div class="empty-icon">
+                <svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="10" y="8" width="40" height="44" rx="3"/>
+                    <line x1="18" y1="20" x2="42" y2="20"/>
+                    <line x1="18" y1="28" x2="38" y2="28"/>
+                    <line x1="18" y1="36" x2="34" y2="36"/>
+                </svg>
+            </div>
+            <h3>No books found</h3>
+            <p>Try adjusting your search or filters</p>
+        </div>
+    </main>
+
+    <!-- Book Detail Modal -->
+    <div id="bookModal" class="modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-container">
+            <button class="modal-close" aria-label="Close">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+            </button>
+            <div class="modal-content">
+                <div class="modal-gallery">
+                    <div class="gallery-main">
+                        <img id="modalMainImage" src="" alt="">
+                        <div class="gallery-nav">
+                            <button class="gallery-prev" aria-label="Previous">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M15 18l-6-6 6-6"/>
+                                </svg>
+                            </button>
+                            <button class="gallery-next" aria-label="Next">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 18l6-6-6-6"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="galleryThumbs" class="gallery-thumbs">
+                        <!-- Thumbnails loaded dynamically -->
+                    </div>
+                </div>
+                <div class="modal-details">
+                    <div class="book-header">
+                        <h2 id="modalTitle" class="book-title"></h2>
+                        <p id="modalCreator" class="book-creator"></p>
+                    </div>
+                    <div id="modalBadges" class="book-badges">
+                        <!-- Badges loaded dynamically -->
+                    </div>
+
+                    <div class="details-tabs">
+                        <button class="tab-btn active" data-tab="overview">Overview</button>
+                        <button class="tab-btn" data-tab="details">Details</button>
+                        <button class="tab-btn" data-tab="condition">Condition</button>
+                    </div>
+
+                    <div id="tabOverview" class="tab-panel active">
+                        <!-- Overview content -->
+                    </div>
+                    <div id="tabDetails" class="tab-panel">
+                        <!-- Details content -->
+                    </div>
+                    <div id="tabCondition" class="tab-panel">
+                        <!-- Condition content -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer" id="contact">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h3>Muhlbauer Books LLC</h3>
+                <p>Specialists in signed and limited edition books</p>
+            </div>
+            <div class="footer-links">
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <a href="#catalog">Browse Catalog</a>
+                    <a href="#about">About Us</a>
+                    <a href="https://www.ebay.com" target="_blank" rel="noopener">eBay Store</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p>Questions about our collection?</p>
+                    <p class="contact-email">zmuhlbauer1@gmail.com</p>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Muhlbauer Books LLC. All rights reserved.</p>
+            <p class="footer-tech">Inventory System v1.0</p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
