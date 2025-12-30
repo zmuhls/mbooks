@@ -29,8 +29,8 @@ make all            # Complete workflow (sync + CSV + deploy)
 python scripts/sync_images.py                      # Sync with optimization
 python scripts/sync_images.py --dry-run            # Preview changes
 python scripts/sync_images.py --no-optimize        # Skip image optimization
-python scripts/sync_images.py --apply-background   # Apply black table background
-python scripts/sync_images.py --apply-background --padding 0.15  # 15% padding
+python scripts/sync_images.py --apply-background   # Apply background blur
+python scripts/sync_images.py --apply-background --padding 0.20  # 20px blur radius
 ```
 
 ### Testing

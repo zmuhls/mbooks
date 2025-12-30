@@ -159,9 +159,9 @@ Images are automatically:
 
 Original images in `listings/` remain unchanged.
 
-### Background Replacement (Optional)
+### Background Blur (Optional)
 
-Apply professional black wooden table backgrounds to book images:
+Apply professional background blur to make books stand out:
 
 **Setup:**
 
@@ -170,25 +170,24 @@ Apply professional black wooden table backgrounds to book images:
    pip install rembg
    ```
 
-2. The black wood table texture is included in `assets/backgrounds/black-wood-table.jpg`
-
 **Usage:**
 
 ```bash
-# Apply background with default settings (12.5% padding)
+# Apply background blur with default settings (15px radius)
 python scripts/sync_images.py --apply-background
 
-# Adjust padding percentage
-python scripts/sync_images.py --apply-background --padding 0.15  # 15% padding
+# Adjust blur intensity
+python scripts/sync_images.py --apply-background --padding 0.20  # 20px blur
+python scripts/sync_images.py --apply-background --padding 0.10  # 10px blur
 
 # Preview without making changes
 python scripts/sync_images.py --apply-background --dry-run
 ```
 
 **How it works:**
-- Removes existing background from book images
-- Composites book onto black wooden table texture
-- Centers book with proportional padding (default 12.5%)
+- Detects book/subject using AI segmentation
+- Applies Gaussian blur to background only
+- Keeps book perfectly sharp and in focus
 - Falls back to original image if processing fails
 - Uses local `rembg` library (no API key required)
 
