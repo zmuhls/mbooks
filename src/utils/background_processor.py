@@ -1,33 +1,33 @@
-"""Background removal and compositing for book images."""
+"""Background blurring for book images."""
 
 import io
 from pathlib import Path
-from typing import Optional, Tuple
-from PIL import Image
+from typing import Optional
+from PIL import Image, ImageFilter
 
 
 class BackgroundProcessor:
-    """Handle background removal and table compositing for book images."""
+    """Handle background blurring for book images."""
 
     def __init__(
         self,
         openrouter_api_key: str = None,
         model: str = "u2net",
         table_background_path: Optional[Path] = None,
-        padding_percent: float = 0.125
+        padding_percent: float = 0.125,
+        blur_radius: int = 15
     ):
         """Initialize background processor.
 
         Args:
             openrouter_api_key: Not used (kept for compatibility)
             model: Background removal model (u2net, u2netp, u2net_human_seg, etc.)
-            table_background_path: Path to black wood table image
-            padding_percent: Padding as fraction (0.125 = 12.5%)
+            table_background_path: Not used for blur mode (kept for compatibility)
+            padding_percent: Not used for blur mode (kept for compatibility)
+            blur_radius: Gaussian blur radius for background (default 15)
         """
         self.model = model
-        self.table_background_path = table_background_path
-        self.padding_percent = padding_percent
-        self.table_background = None
+        self.blur_radius = blur_radius
         self._rembg_available = False
 
         # Try to import rembg
@@ -35,30 +35,22 @@ class BackgroundProcessor:
             from rembg import remove
             self._remove_bg = remove
             self._rembg_available = True
+            print(f"Background blur mode enabled (radius: {blur_radius}px)")
         except ImportError:
             print("Warning: rembg not installed. Install with: pip install rembg")
             self._remove_bg = None
 
-        # Load and cache table background
-        if table_background_path and table_background_path.exists():
-            try:
-                self.table_background = Image.open(table_background_path)
-                print(f"Loaded table background: {table_background_path.name}")
-            except Exception as e:
-                print(f"Warning: Could not load table background: {e}")
-                self.table_background = None
-
-    def remove_background(self, image_path: Path) -> Optional[Image.Image]:
-        """Remove background using rembg library.
+    def get_subject_mask(self, image_path: Path) -> Optional[Image.Image]:
+        """Get mask of the subject (book) using rembg.
 
         Args:
             image_path: Path to source image
 
         Returns:
-            PIL Image with transparent background, or None if failed
+            PIL Image mask (grayscale), or None if failed
         """
         if not self._rembg_available:
-            print(f"    rembg not available, skipping background removal")
+            print(f"    rembg not available, skipping background blur")
             return None
 
         try:
@@ -66,105 +58,78 @@ class BackgroundProcessor:
             with open(image_path, 'rb') as f:
                 input_data = f.read()
 
-            # Remove background
+            # Remove background to get subject with alpha channel
             output_data = self._remove_bg(input_data)
 
             # Convert to PIL Image
-            output_image = Image.open(io.BytesIO(output_data))
+            subject_rgba = Image.open(io.BytesIO(output_data))
 
-            return output_image
+            # Extract alpha channel as mask
+            if subject_rgba.mode == 'RGBA':
+                mask = subject_rgba.split()[3]  # Alpha channel
+                return mask
+            else:
+                print(f"    Expected RGBA image, got {subject_rgba.mode}")
+                return None
 
         except Exception as e:
-            print(f"    Background removal failed: {e}")
+            print(f"    Mask extraction failed: {e}")
             return None
 
-    def composite_on_table(
+    def blur_background(
         self,
-        cutout_image: Image.Image,
-        output_size: Tuple[int, int] = None
+        original_image: Image.Image,
+        mask: Image.Image
     ) -> Image.Image:
-        """Composite cutout book onto black wooden table background.
+        """Blur the background while keeping subject sharp.
 
         Args:
-            cutout_image: Book with transparent background
-            output_size: Target dimensions for final image (uses table bg size if None)
+            original_image: Original image (RGB)
+            mask: Mask of subject (white=subject, black=background)
 
         Returns:
-            Composited image with black table background
+            Image with blurred background
         """
-        if self.table_background is None:
-            raise ValueError("Table background not loaded")
+        # Create blurred version of entire image
+        blurred = original_image.filter(ImageFilter.GaussianBlur(radius=self.blur_radius))
 
-        # Use table background size if output size not specified
-        if output_size is None:
-            output_size = self.table_background.size
-
-        # Create a copy of table background at target size
-        table = self.table_background.copy()
-        if table.size != output_size:
-            table = table.resize(output_size, Image.Resampling.LANCZOS)
-
-        # Calculate available space with padding
-        padding_px = int(min(output_size) * self.padding_percent)
-        available_w = output_size[0] - (2 * padding_px)
-        available_h = output_size[1] - (2 * padding_px)
-
-        # Scale book to fit available space (maintain aspect ratio)
-        book_aspect = cutout_image.width / cutout_image.height
-
-        if cutout_image.width / available_w > cutout_image.height / available_h:
-            # Width is limiting factor
-            new_w = available_w
-            new_h = int(new_w / book_aspect)
+        # Composite: use original where mask is white, blurred where mask is black
+        # Convert mask to match image mode if needed
+        if original_image.mode == 'RGB':
+            result = Image.composite(original_image, blurred, mask)
         else:
-            # Height is limiting factor
-            new_h = available_h
-            new_w = int(new_h * book_aspect)
+            result = Image.composite(original_image.convert('RGB'), blurred, mask)
 
-        # Resize book
-        scaled_book = cutout_image.resize((new_w, new_h), Image.Resampling.LANCZOS)
-
-        # Calculate center position
-        x = (output_size[0] - new_w) // 2
-        y = (output_size[1] - new_h) // 2
-
-        # Composite using alpha channel if present
-        if scaled_book.mode == 'RGBA':
-            table.paste(scaled_book, (x, y), scaled_book)
-        else:
-            table.paste(scaled_book, (x, y))
-
-        return table
+        return result
 
     def process_image(self, image_path: Path) -> Optional[Image.Image]:
-        """Full pipeline: remove background → composite on table.
+        """Full pipeline: detect subject → blur background.
 
         Args:
             image_path: Path to source image
 
         Returns:
-            Processed PIL Image, or None if processing failed
+            Processed PIL Image with blurred background, or None if processing failed
         """
-        # Step 1: Remove background
-        cutout = self.remove_background(image_path)
+        try:
+            # Load original image
+            original = Image.open(image_path)
 
-        if cutout is None:
-            # Fallback: use original image and composite directly
-            # This provides a degraded but functional result
-            try:
-                original = Image.open(image_path)
-                # Convert to RGBA for consistency
-                if original.mode != 'RGBA':
-                    original = original.convert('RGBA')
-                return self.composite_on_table(original)
-            except Exception as e:
-                print(f"    Compositing failed: {e}")
+            # Convert to RGB if needed
+            if original.mode != 'RGB':
+                original = original.convert('RGB')
+
+            # Get subject mask
+            mask = self.get_subject_mask(image_path)
+
+            if mask is None:
+                print(f"    Could not extract mask, skipping blur")
                 return None
 
-        # Step 2: Composite on table
-        try:
-            result = self.composite_on_table(cutout)
+            # Apply background blur
+            result = self.blur_background(original, mask)
             return result
+
         except Exception as e:
-            print(f"    Compositing failed: {e}")
+            print(f"    Background blur failed: {e}")
             return None

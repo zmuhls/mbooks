@@ -5,6 +5,15 @@ import json
 from pathlib import Path
 from datetime import datetime
 from typing import List, Dict, Any, Optional
+import sys
+
+# Handle both direct execution and module import
+try:
+    from ..utils.image_urls import ImageURLBuilder
+except ImportError:
+    # Add parent directory to path for direct execution
+    sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+    from src.utils.image_urls import ImageURLBuilder
 
 
 class EbayExporter:
@@ -30,6 +39,7 @@ class EbayExporter:
 
     def __init__(self, listings_path: Path):
         self.listings_path = Path(listings_path)
+        self.url_builder = ImageURLBuilder()
 
     def load_listings(self) -> List[Dict]:
         """Load all metadata.json files from listings directory."""
@@ -114,9 +124,8 @@ class EbayExporter:
         if physical.get('has_dust_jacket'):
             attrs.append('Dust Jacket')
 
-        # Image URLs (placeholder - would need actual URLs)
-        image_files = images.get('files', [])
-        pic_urls = '|'.join(image_files) if image_files else ''
+        # Image URLs with full GitHub Pages URLs
+        pic_urls = self.url_builder.build_urls(listing.get('_dir', ''), images)
 
         return {
             'Action': 'Add',

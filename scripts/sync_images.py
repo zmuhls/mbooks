@@ -53,7 +53,7 @@ def optimize_image(image_path: Path, max_size: int = 1600, quality: int = 85, bg
 
 
 def sync_images(source_dir: Path, target_dir: Path, optimize: bool = True, dry_run: bool = False,
-                apply_background: bool = False, padding_percent: float = 0.125) -> None:
+                apply_background: bool = False, padding_percent: float = 0.15) -> None:
     """Sync image files and metadata from source to target.
 
     Args:
@@ -61,8 +61,8 @@ def sync_images(source_dir: Path, target_dir: Path, optimize: bool = True, dry_r
         target_dir: Target docs/listings directory
         optimize: Whether to optimize images during sync
         dry_run: Show what would be synced without copying
-        apply_background: Apply black wooden table background
-        padding_percent: Padding as fraction (default 0.125 = 12.5%)
+        apply_background: Blur background while keeping subject sharp
+        padding_percent: Blur radius multiplier (default 0.15 = 15px)
     """
     if not source_dir.exists():
         print(f"Error: Source directory {source_dir} does not exist")
@@ -84,21 +84,10 @@ def sync_images(source_dir: Path, target_dir: Path, optimize: bool = True, dry_r
 
             from src.utils.background_processor import BackgroundProcessor
 
-            # API key not required for rembg, but keep for compatibility
-            api_key = os.getenv("OPENROUTER_API_KEY", "")
-
-            table_bg_path = project_root / "assets" / "backgrounds" / "black-wood-table.jpg"
-
-            if not table_bg_path.exists():
-                print(f"Warning: Table background not found at {table_bg_path}")
-                print("Skipping background processing.")
-            else:
-                bg_processor = BackgroundProcessor(
-                    openrouter_api_key=api_key,
-                    table_background_path=table_bg_path,
-                    padding_percent=padding_percent
-                )
-                print(f"Background processing enabled (padding: {padding_percent*100:.1f}%)")
+            # Create background processor (blur mode)
+            bg_processor = BackgroundProcessor(
+                blur_radius=int(padding_percent * 100)  # Use padding param for blur radius
+            )
         except Exception as e:
             print(f"Warning: Could not initialize background processor: {e}")
             bg_processor = None
@@ -158,9 +147,9 @@ if __name__ == '__main__':
     parser.add_argument('--no-optimize', action='store_true',
                        help='Skip image optimization')
     parser.add_argument('--apply-background', action='store_true',
-                       help='Apply black wooden table background to images')
-    parser.add_argument('--padding', type=float, default=0.125,
-                       help='Padding percentage (default: 0.125 = 12.5%%)')
+                       help='Blur background while keeping subject sharp')
+    parser.add_argument('--padding', type=float, default=0.15,
+                       help='Blur radius (default: 0.15 = 15px)')
     args = parser.parse_args()
 
     project_root = Path(__file__).parent.parent

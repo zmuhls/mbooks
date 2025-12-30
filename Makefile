@@ -6,9 +6,9 @@ sync-images:
 	@python scripts/sync_images.py
 	@echo "Sync complete."
 
-# Sync images with black wooden table background
+# Sync images with blurred background
 sync-images-bg:
-	@echo "Syncing images with black table background..."
+	@echo "Syncing images with blurred backgrounds..."
 	@python scripts/sync_images.py --apply-background
 	@echo "Sync complete."
 
@@ -40,9 +40,9 @@ all: sync-images build-csv deploy
 help:
 	@echo "Available commands:"
 	@echo "  make sync-images     - Sync and optimize images from listings/ to docs/"
-	@echo "  make sync-images-bg  - Sync with black wooden table backgrounds"
+	@echo "  make sync-images-bg  - Sync with blurred backgrounds"
 	@echo "  make build-csv       - Build eBay CSV with full image URLs (auto-syncs first)"
-	@echo "  make build-csv-bg    - Build eBay CSV with background-processed images"
+	@echo "  make build-csv-bg    - Build eBay CSV with blur-processed images"
 	@echo "  make deploy          - Deploy images to GitHub Pages"
 	@echo "  make all             - Run complete workflow (sync + export + deploy)"
 	@echo ""
@@ -52,7 +52,7 @@ help:
 	@echo "  3. make deploy"
 	@echo "  4. Upload CSV to eBay"
 	@echo ""
-	@echo "Background processing workflow:"
+	@echo "Background blur workflow:"
 	@echo "  1. pip install rembg  (first time only)"
 	@echo "  2. make build-csv-bg"
 	@echo "  3. make deploy"

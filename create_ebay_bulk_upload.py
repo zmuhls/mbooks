@@ -187,17 +187,22 @@ def generate_description(metadata):
 
 
 def get_image_urls(listing_folder, metadata):
-    """Generate image filenames for eBay (would need to be uploaded separately)"""
+    """Generate full GitHub Pages URLs for eBay images."""
+    BASE_URL = "https://zmuhls.github.io/mbooks/listings"
+
     images = metadata.get("images", {}).get("files", [])
     primary = metadata.get("images", {}).get("primary_image", "")
 
-    if primary:
-        # Primary image first
+    # Primary image first
+    if primary and primary in images:
         image_list = [primary] + [img for img in images if img != primary]
     else:
         image_list = images
 
-    return "|".join(image_list)
+    # Build full URLs
+    full_urls = [f"{BASE_URL}/{listing_folder}/{img}" for img in image_list]
+
+    return "|".join(full_urls)
 
 
 def create_csv(output_file):
