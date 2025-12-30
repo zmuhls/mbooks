@@ -122,6 +122,102 @@ python books.py extract first_blood_david_morrell
 
 3. Edit the extracted data and save as `metadata.json`
 
+## eBay Listing Workflow
+
+### Quick Start
+
+```bash
+# 1. Add images and metadata to a listing
+cp images/*.jpg listings/book_name/
+nano listings/book_name/metadata.json
+
+# 2. Generate eBay CSV with optimized images
+make build-csv
+
+# 3. Deploy images to GitHub Pages
+make deploy
+
+# 4. Upload CSV to eBay Seller Hub
+```
+
+### Generated CSV Format
+
+The CSV will contain full GitHub Pages URLs in the `PicURL` field:
+
+```
+https://zmuhls.github.io/mbooks/listings/first_blood_david_morrell/IMG_5531.jpg|https://zmuhls.github.io/mbooks/listings/first_blood_david_morrell/IMG_5532.jpg
+```
+
+Primary images (specified in metadata.json) appear first.
+
+### Image Optimization
+
+Images are automatically:
+- Resized to 1600px maximum dimension
+- Compressed to 85% JPEG quality
+- Optimized for web delivery
+
+Original images in `listings/` remain unchanged.
+
+### Background Replacement (Optional)
+
+Apply professional black wooden table backgrounds to book images:
+
+**Setup:**
+
+1. Install background removal library:
+   ```bash
+   pip install rembg
+   ```
+
+2. The black wood table texture is included in `assets/backgrounds/black-wood-table.jpg`
+
+**Usage:**
+
+```bash
+# Apply background with default settings (12.5% padding)
+python scripts/sync_images.py --apply-background
+
+# Adjust padding percentage
+python scripts/sync_images.py --apply-background --padding 0.15  # 15% padding
+
+# Preview without making changes
+python scripts/sync_images.py --apply-background --dry-run
+```
+
+**How it works:**
+- Removes existing background from book images
+- Composites book onto black wooden table texture
+- Centers book with proportional padding (default 12.5%)
+- Falls back to original image if processing fails
+- Uses local `rembg` library (no API key required)
+
+**Note:** Background processing adds ~2-5 seconds per image. Original images in `listings/` remain unchanged.
+
+### Available Make Commands
+
+```bash
+make sync-images  # Sync and optimize images from listings/ to docs/
+make build-csv    # Build eBay CSV with full image URLs (auto-syncs first)
+make deploy       # Deploy images to GitHub Pages
+make all          # Run complete workflow (sync + export + deploy)
+```
+
+### Manual Workflow (without Make)
+
+```bash
+# 1. Sync images to docs/
+python scripts/sync_images.py
+
+# 2. Generate CSV
+python src/ebay/exporter.py listings
+
+# 3. Deploy to GitHub Pages
+git add docs/
+git commit -m "sync images to github pages"
+git push origin main
+```
+
 ## Configuration
 
 Edit `config.yaml` to customize:
@@ -153,7 +249,7 @@ CSV includes all standard fields:
 - Title, Description, Category
 - Author, Publisher, Format
 - Condition, Special Attributes
-- Images (filenames - upload separately)
+- Images (full GitHub Pages URLs - automatically hosted)
 - Pricing (user fills in)
 - Shipping & Returns
 
