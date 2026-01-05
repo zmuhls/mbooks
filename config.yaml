@@ -131,6 +131,73 @@ validation:
     - "GOOD"
     - "ACCEPTABLE"
 
+# Search enrichment settings
+search:
+  enabled: true
+  provider: "openrouter"  # openrouter, perplexity, serpapi
+
+  # Provider settings
+  providers:
+    openrouter:
+      model: "perplexity/sonar:online"  # Web search via OpenRouter
+      max_tokens: 2000
+      api_key_env: "OPENROUTER_API_KEY"
+    perplexity:
+      model: "sonar-pro"  # Direct Perplexity API
+      max_tokens: 2000
+      api_key_env: "PERPLEXITY_API_KEY"
+    serpapi:
+      engine: "google"
+      num_results: 10
+      api_key_env: "SERPAPI_API_KEY"
+
+  # Query templates for different sources
+  queries:
+    ebay_completed:
+      template: 'site:ebay.com "{title}" {edition_tags} {creator}'
+      priority: 1
+      description: "eBay completed listings for pricing and patterns"
+    bibliographic:
+      template: '"{title}" {author} publisher ISBN {year}'
+      priority: 2
+      description: "Bibliographic data lookup"
+    abebooks:
+      template: 'site:abebooks.com "{title}" {author} {edition_type}'
+      priority: 3
+      description: "AbeBooks for edition details"
+
+  # Fields that can be searched
+  searchable_fields:
+    - publisher
+    - place_of_publication
+    - isbn_10
+    - isbn_13
+    - page_count
+    - genre
+    - publication_year
+    - binding
+    - comparable_prices
+
+  # Confidence thresholds
+  thresholds:
+    auto_accept: 0.95    # Auto-accept matches above this confidence
+    suggest: 0.70        # Show as suggestion above this
+    minimum: 0.50        # Don't show matches below this
+
+  # Source authority weights (higher = more trusted)
+  source_authority:
+    abebooks: 0.95
+    worldcat: 0.95
+    ebay: 0.90
+    amazon: 0.85
+    goodreads: 0.80
+    web: 0.70
+
+  # Rate limiting
+  rate_limits:
+    requests_per_minute: 30
+    daily_limit: 500
+
 # Logging
 logging:
   level: "INFO"
